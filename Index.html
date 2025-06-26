@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Matter Visualizer</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: radial-gradient(circle, #020202 0%, #000000 100%);
+      overflow: hidden;
+      font-family: 'Courier New', Courier, monospace;
+      color: #ff2e2e;
+    }
+    #info {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 1.1rem;
+      z-index: 2;
+      max-width: 300px;
+      color: #ff2e2e;
+    }
+    canvas {
+      display: block;
+    }
+    #subscribe {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 24px;
+      background: rgba(255,46,46,0.2);
+      border: 1px solid #ff2e2e;
+      color: #ff2e2e;
+      font-size: 1rem;
+      cursor: pointer;
+      z-index: 2;
+      transition: 0.3s;
+      border-radius: 6px;
+    }
+    #subscribe:hover {
+      background: #ff2e2e;
+      color: #000;
+    }
+    #researchPage {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      color: #ff2e2e;
+      padding: 40px;
+      z-index: 3;
+      display: none;
+      overflow-y: auto;
+    }
+    #researchPage h2 {
+      color: #ff2e2e;
+    }
+    #closeResearch {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 5px 10px;
+      background: #ff2e2e;
+      color: #000;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="info">
+    <strong>Quantum Visualization Lab</strong><br>
+    Click on any region to simulate quantum-level resolution into atomic structures.<br>
+    Each interaction represents theoretical particle-level expansion.
+  </div>
+  <button id="subscribe">Open Research Page</button>
+  <canvas id="atomCanvas"></canvas>
+
+  <div id="researchPage">
+    <button id="closeResearch">Close</button>
+    <h2>Research Overview</h2>
+    <p>This visualizer simulates an artistic interpretation of quantum space. Each particle rendered represents a probabilistic atom within a confined energy field, meant to mimic real-time molecular interaction patterns in a stylized fashion.</p>
+    <p><strong>Note:</strong> We built this project as a test of our front-end and creative visualization skills. We are not professional researchers or physicists, and this site does not represent real scientific data.</p>
+    <h3>Scientific Goals</h3>
+    <ul>
+      <li>Enhance public understanding of atomic structure through visual play.</li>
+      <li>Simulate scalable particle environments for educational outreach.</li>
+      <li>Lay a visual groundwork for future interactive quantum art installations.</li>
+    </ul>
+    <h3>Further Exploration</h3>
+    <p>You can integrate this tool with external datasets, simulations, or live research feeds using WebSocket or API endpoints for scientific engagement.</p>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('atomCanvas');
+    const ctx = canvas.getContext('2d');
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    let atoms = [];
+    let atomCount = 512;
+    for (let i = 0; i < atomCount; i++) {
+      atoms.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        r: Math.random() * 2 + 1,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        alpha: Math.random() * 0.6 + 0.3
+      });
+    }
+
+    function drawAtoms() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+      ctx.fillRect(0, 0, width, height);
+
+      atoms.forEach(a => {
+        ctx.beginPath();
+        ctx.arc(a.x, a.y, a.r, 0, 2 * Math.PI);
+        ctx.fillStyle = `rgba(0,102,255,${a.alpha})`;
+        ctx.fill();
+        a.x += a.vx;
+        a.y += a.vy;
+
+        if (a.x < 0 || a.x > width) a.vx *= -1;
+        if (a.y < 0 || a.y > height) a.vy *= -1;
+      });
+
+      requestAnimationFrame(drawAtoms);
+    }
+
+    canvas.addEventListener('click', () => {
+      atomCount += 256;
+      for (let i = 0; i < 256; i++) {
+        atoms.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          r: Math.random() * 2 + 1,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4,
+          alpha: Math.random() * 0.6 + 0.3
+        });
+      }
+      document.getElementById('info').innerHTML = `
+        <strong>Quantum Visualization Lab</strong><br>
+        You clicked into a visual field of <strong>${atomCount}</strong> particles.<br>
+        Each particle reflects an abstracted quantum presence.
+      `;
+    });
+
+    document.getElementById('subscribe').addEventListener('click', () => {
+      document.getElementById('researchPage').style.display = 'block';
+    });
+
+    document.getElementById('closeResearch').addEventListener('click', () => {
+      document.getElementById('researchPage').style.display = 'none';
+    });
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    drawAtoms();
+  </script>
+</body>
+</html>
